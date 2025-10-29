@@ -1,0 +1,46 @@
+# configs/qwen_sft_config.yaml
+model_args:
+  name: "unsloth/Qwen3-4B-Base"
+  max_seq_length: 4096
+  dtype: "bfloat16"   # mapped to torch_dtype in code
+  load_in_4bit: True
+  full_finetuning: False
+
+lora_args:
+  r: 16
+  lora_alpha: 32
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  lora_dropout: 0.05
+  bias: "none"
+  use_gradient_checkpointing: "unsloth"  # memory saving
+  random_state: 3407
+  use_rslora: False
+  loftq_config: null
+
+datasets:
+  names:
+    - "codin-research/sft-qa-synthetic-normal"
+  preprocessing:
+    num_proc: 16
+
+training_args:
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 4
+  warmup_ratio: 0.1
+  num_train_epochs: 2
+  optim: "adamw_torch_fused"
+  learning_rate: 2e-4
+  weight_decay: 0.01
+  logging_steps: 10
+  lr_scheduler_type: "cosine"
+  seed: 3407
+  save_steps: 500
+  load_best_model_at_end: True
+  save_total_limit: 5
+  metric_for_best_model: "eval_loss"
+  output_dir: "outputs/lora_sft_model"
+  report_to: ["comet_ml"]
+
+artifacts:
+  model_hub_id: "jasong03/Qwen3-4B-Medical-LoRA-SFT-0710"

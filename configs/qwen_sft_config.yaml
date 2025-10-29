@@ -1,0 +1,41 @@
+model_args:
+  name: "unsloth/Qwen3-4B-Base"
+  max_seq_length: 4096
+  dtype: null  
+  load_in_4bit: False
+  full_finetuning: True
+
+datasets:
+  names:
+    - "SetFit/go_emotions"
+  splits:
+    train: "train"
+    validation: "validation"
+    test: "test"
+  preprocessing:
+    num_proc: 16
+
+
+training_args:
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 4
+  warmup_ratio: 0.1
+  num_train_epochs: 2
+  fp16: true  # This should be set dynamically based on hardware in code
+  bf16: false # This too
+  optim: "adamw_torch_fused"
+  learning_rate: 5e-6
+  weight_decay: 1e-4
+  logging_steps: 10
+  lr_scheduler_type: "cosine"
+  seed: 3407
+  save_steps: 500
+  load_best_model_at_end: True
+  save_total_limit: 5
+  metric_for_best_model: "eval_loss"
+  output_dir: "outputs/sft_model"
+  report_to: ["comet_ml"]
+
+artifacts:
+  model_hub_id: "jasong03/qwen3-4b-emo-plain-sft"

@@ -1,0 +1,37 @@
+model_args:
+  name: "unsloth/Qwen3-4B-Base"
+  max_seq_length: 4096
+  dtype: null # None
+  load_in_4bit: False
+  full_finetuning: True
+
+datasets:
+  names:
+    - "mrm8488/goemotions"  
+  preprocessing:
+    num_proc: 16
+
+training_args:
+  per_device_train_batch_size: 8
+  gradient_accumulation_steps: 16
+  warmup_ratio: 0.1
+  num_train_epochs: 1
+  fp16: true  # This should be set dynamically based on hardware in code
+  bf16: false # This too
+  logging_steps: 10
+  optim: "adamw_torch_fused"
+  learning_rate: 1e-5
+  embedding_learning_rate: 5e-6
+  weight_decay: 1e-4
+  lr_scheduler_type: "cosine_with_min_lr"
+  seed: 3407
+  output_dir: "outputs/archive_model"
+  report_to: ["comet_ml"]
+  save_strategy: "steps"
+  save_steps: 500
+  load_best_model_at_end: True
+  save_total_limit: 5
+  metric_for_best_model: "eval_loss"
+  
+artifacts:
+  model_hub_id: "jasong03/Qwen3-4B-CPT-0802"

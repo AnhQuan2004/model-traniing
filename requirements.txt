@@ -1,0 +1,16 @@
+auto_mix_prep
+comet_ml
+datasets
+huggingface_hub
+loguru
+python-dotenv
+PyYAML
+torch
+transformers
+trl
+unsloth
+
+
+# Install Unsloth and Unsloth Zoo with pip options
+# You can run the following command after installing other requirements:
+# pip install --upgrade --force-reinstall --no-cache-dir --no-deps unsloth unsloth_zoo

@@ -74,15 +74,22 @@ def sft_pipeline(config_path: str):
 
     # Determine which formatting function to use based on the dataset
     dataset_name = config["datasets"]["names"][0]
-    if "goemotions" in dataset_name:
+    if "go_emotions" in dataset_name:
         formatting_function = format_goemotions_for_chat
     else:
         formatting_function = apply_chat_template
 
+    # Determine the columns to remove from one of the splits (e.g., 'train')
+    # This is necessary because a DatasetDict doesn't have a single `column_names` attribute.
+    if isinstance(dataset, datasets.DatasetDict):
+        column_names = dataset['train'].column_names
+    else:
+        column_names = dataset.column_names
+
     dataset = dataset.map(
         formatting_function,
         fn_kwargs={"tokenizer": tokenizer},
-        remove_columns=dataset.column_names
+        remove_columns=column_names
     )
 
     # Check if the loaded dataset is a DatasetDict and contains the specified splits
